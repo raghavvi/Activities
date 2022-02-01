@@ -62,9 +62,61 @@ let years = [];
 	//		x2: timelineX2
 	//		yr: (2017 - year) * gapBetweenTimelines + startOfTimelinesY)
 
+	svg.selectAll("line")
+	.data(years)
+	.enter()
+	.append("line")
+	.style("stroke", "black")
+	.style("stroke-width", 2)
+	.attr("x1",timelineX1)
+	.attr("x2",timelineX2)
+	.attr("y1", (d) => (2017 - d) * gapBetweenTimelines + startOfTimelinesY)
+	.attr("y2",(d) => (2017 - d) * gapBetweenTimelines + startOfTimelinesY);
+
 
 	// TO DO:  Add circles for each event in the data
 	// look at the syntax for adding a new element using d3
+
+	//(d) =>  (d.cost/165) * (100) + 5
+	//(d) => (d.daysFromYrStart/365) * (timelineX2-timelineX1) + timelineX1
+	//(d) => (2017 - d.year) * gapBetweenTimelines + startOfTimelinesY
+
+
+	svg.selectAll("circle")
+	.data(data)
+	.enter()
+	.append('circle')
+	.style("opacity", .8)
+	.style("stroke-width",2)
+    .style("fill", (d) => {
+		if (d.category == "tropical-cyclone") {
+			return "#081d58";
+		} else if (d.category == "drought-wildfire") {
+			return "#ffffd9";
+		} else if (d.category == "severe-storm") {
+			return "#c7e9b4";
+		} else if (d.category == "winter-storm-freeze") {
+			return "#081d58";
+		} else if (d.category == "flooding") {
+			return "#41b6c4";
+		} else {
+			return "#000000";
+		}
+	})
+	.attr('cx', (d) => d.daysFromYrStart/365 * (timelineX2-timelineX1) + timelineX1)
+    .attr('cy', (d) => (2017 - d.year) * gapBetweenTimelines + startOfTimelinesY )
+    .attr('r', (d) => (d.cost)/165 * (100) + 5)
+	.style('stroke', 'gray');
+
+
+
+	// .attr("r", (d) => (d.cost/165) * (100) + 5)
+	// .attr("cx", (d) => d.daysFromYrStart/365 * (timelineX2-timelineX1) + timelineX1)
+	// .attr("cy", (d) => (2017 - d.year) * gapBetweenTimelines + startOfTimelinesY )
+	// .style("stroke", "grey")
+	// .style("fill", "grey")
+	// .style("stroke-width", 2);
+
 	// attributes:  
 	//		opacity = .8
 	//		radius: d.cost)/165 * (100) + 5  //mapping from domain (cost) to range (pixels)

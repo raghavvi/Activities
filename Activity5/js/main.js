@@ -47,8 +47,20 @@ function drawChart(data){
 	// Initialize linear and ordinal scales (input domain and output range)
 	//TO DO
 	// CREATE an xScale using d3.scaleLinear , with domain 0-365 and range 0-width
+	const xScale = d3.scaleLinear()
+	.domain([0,365])
+	.range([0,width])
+
 	// CREATE a yScale using d3.scaleLinear, with domain [ max year, min year] and range [0, height]  Note- why did I reverse the domain going from max to min? 
+	const yScale = d3.scaleLinear()
+	.domain([d3.max(data, d => d.year), d3.min(data, d => d.year)]) //max from sales field in the objects in the data array
+	.range([0, height]); 
+
 	// CREATE an rScale using d3.scaleLinear, with domain the extent of the cost field in data, and range 5, 100
+	const rScale = d3.scaleLinear()
+	.domain(d3.extent(data, d => d.cost)) //max from sales field in the objects in the data array
+	.range([5, 100]); 
+
 
 	// Construct a new ordinal scale with a range of ten categorical colours
 	const colorPalette = d3.scaleOrdinal(d3.schemeTableau10) //TRY OTHER COLOR SCHEMES.... https://github.com/d3/d3-scale-chromatic
@@ -57,25 +69,30 @@ function drawChart(data){
 		// Initialize axes
 		//TO DO 
 		//  CREATE a top axis (xScale)
+		const xAxis = d3.axisTop(xScale);		
 		//  CREATE a left axis (yScale)
-
+		const yAxis = d3.axisLeft(yScale);
 		//CREATE an xAxisGroup and append it to the SVG
+		const xAxisGroup = svg.append('g')
+		.attr('class', 'axis x-axis') 
+		.call(xAxis);
 		//CREATE a yAxisGroup and append it to the SVG
-
-
+		const yAxisGroup = svg.append('g')
+		.attr('class', 'axis y-axis')
+		.call(yAxis);
+  
 		//Add circles for each event in the data
 		svg.selectAll('circle')
 	    .data(data)
 	    .enter()
 	  .append('circle')
-	  	.attr('fill', 'black' ) //TO DO: use the color palette.  //(d) => colorPalette(d.category) )
+	  	.attr('fill', (d) => colorPalette(d.category)) //TO DO: use the color palette.  //(d) => colorPalette(d.category) )
 	    .attr('opacity', .8)
 	    .attr('stroke', "gray")
 	    .attr('stroke-width', 2)
-	    .attr('r', 10) //TO DO: use the rScale 
-	    .attr('cy', 100) // TO DO:  use the yScale 
-	    .attr('cx', 100) //TO DO: use the xScale 
-
+	    .attr('r', (d) => rScale(d.cost)) //TO DO: use the rScale 
+	    .attr('cy', (d) => yScale(d.year)) // TO DO:  use the yScale 
+	    .attr('cx', xScale) //TO DO: use the xScale 
 
 }
 
